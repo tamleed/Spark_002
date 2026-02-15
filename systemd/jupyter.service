@@ -1,0 +1,16 @@
+[Unit]
+Description=JupyterLab (localhost only)
+After=network-online.target tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/llm-gateway.env
+ExecStart=/bin/bash -lc 'mkdir -p "${JUPYTER_WORKDIR:-$HOME/work}" && exec /opt/jupyter-venv/bin/jupyter lab --ip=127.0.0.1 --port=${JUPYTER_PORT:-8888} --no-browser --ServerApp.root_dir="${JUPYTER_WORKDIR:-$HOME/work}" --ServerApp.token="${JUPYTER_TOKEN}"'
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

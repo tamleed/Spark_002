@@ -1,0 +1,17 @@
+[Unit]
+Description=LLM Switchboard RQ Worker
+After=network-online.target docker.service tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/llm-switchboard
+EnvironmentFile=/etc/llm-gateway.env
+ExecStart=/opt/llm-switchboard/.venv/bin/python -m worker.worker
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
