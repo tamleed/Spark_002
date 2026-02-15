@@ -1,0 +1,52 @@
+models:
+  - name: gpt-oss120
+    source:
+      type: huggingface_repo
+      value: openai/gpt-oss-120b
+    backend:
+      image: nvcr.io/nvidia/vllm:25.11-py3
+      port: 8001
+      vllm_args:
+        - --dtype=auto
+        - --max-model-len=8192
+        - --gpu-memory-utilization=0.92
+        - --tensor-parallel-size=1
+    resources:
+      hf_cache_dir: /var/lib/huggingface
+      models_dir: /mnt/models
+    notes: "Default high-quality OSS model"
+
+  - name: qwen3-30b
+    source:
+      type: huggingface_repo
+      value: Qwen/Qwen3-30B-A3B-Instruct-2507
+    backend:
+      image: nvcr.io/nvidia/vllm:25.11-py3
+      port: 8001
+      vllm_args:
+        - --dtype=bfloat16
+        - --max-model-len=8192
+        - --gpu-memory-utilization=0.9
+        - --tensor-parallel-size=1
+    resources:
+      hf_cache_dir: /var/lib/huggingface
+      models_dir: /mnt/models
+    notes: "Balanced model for throughput"
+
+  - name: qwen3-235b-4bit
+    source:
+      type: huggingface_repo
+      value: Qwen/Qwen3-235B-A22B-Instruct-2507-FP4
+    backend:
+      image: nvcr.io/nvidia/vllm:25.11-py3
+      port: 8001
+      vllm_args:
+        - --dtype=auto
+        - --quantization=awq
+        - --max-model-len=4096
+        - --gpu-memory-utilization=0.95
+        - --tensor-parallel-size=1
+    resources:
+      hf_cache_dir: /var/lib/huggingface
+      models_dir: /mnt/models
+    notes: "Large model in quantized mode; tune max-model-len for Spark memory headroom"
